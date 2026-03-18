@@ -1,0 +1,43 @@
+# LSDD-Net Phase 1 训练配置 (仿真有监督)
+
+data:
+  csv_dir: "data/raw"                    # CSV文件目录
+  window_length: 500                     # 滑窗长度 (500步 = 5秒@100Hz)
+  stride: 50                             # 滑窗步长 (50步 = 0.5秒)
+  val_conditions:                        # 验证集条件 (文件名含以下关键词则归入验证集)
+    - "wind_s1.4_bf2.2"
+    - "nowind_bf1.5"
+  manifest_path: "data/manifest.json"    # 数据清单路径
+  norm_stats_path: "checkpoints/norm_stats.pt"  # 标准化参数路径
+
+model:
+  d_model: 64
+  d_state: 16
+  n_layers: 4
+  d_conv: 4
+  mlp_hidden: 32
+
+training:
+  phase: 1
+  epochs: 200
+  batch_size: 64
+  num_workers: 4
+
+  optimizer:
+    type: "adamw"
+    lr: 1.0e-3
+    weight_decay: 1.0e-4
+
+  scheduler:
+    type: "cosine"
+    T_max: 200
+
+  loss_weights:
+    recon: 0.1        # λ₁: 瞬变力惩罚权重
+    smooth: 0.01      # λ₂: 世界系平滑损失权重
+
+  checkpoint_dir: "checkpoints"
+  save_every: 10       # 每N个epoch保存一次checkpoint
+  log_dir: "runs"      # TensorBoard日志目录
+
+seed: 42

@@ -1,0 +1,6 @@
+<launch>
+    <!-- LSDD-Net 推理节点 -->
+    <node name="lsdd_inference" pkg="lsdd_net" type="lsdd_inference_node.py" output="screen">
+        <param name="config" value="$(find lsdd_net)/configs/deploy.yaml"/>
+    </node>
+</launch>

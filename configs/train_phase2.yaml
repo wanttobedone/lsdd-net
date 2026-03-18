@@ -1,0 +1,42 @@
+# LSDD-Net Phase 2 训练配置 (真机无监督微调)
+
+data:
+  csv_dir: "data/real"                   # 真机数据目录
+  window_length: 500
+  stride: 50
+  val_conditions: []                     # Phase 2无验证集划分
+  manifest_path: "data/manifest_real.json"
+  norm_stats_path: "checkpoints/norm_stats.pt"  # 复用Phase 1的标准化参数
+
+model:
+  d_model: 64
+  d_state: 16
+  n_layers: 4
+  d_conv: 4
+  mlp_hidden: 32
+
+training:
+  phase: 2
+  pretrained_checkpoint: "checkpoints/phase1_best.pt"  # Phase 1最优权重
+  freeze_backbone: true    # 冻结Mamba编码器, 仅微调MLP头
+  epochs: 50
+  batch_size: 32
+  num_workers: 2
+
+  optimizer:
+    type: "adam"
+    lr: 1.0e-4             # 低学习率防止表征漂移
+    weight_decay: 0.0
+
+  scheduler:
+    type: "cosine"
+    T_max: 50
+
+  loss_weights:
+    smooth: 0.01
+
+  checkpoint_dir: "checkpoints"
+  save_every: 5
+  log_dir: "runs_phase2"
+
+seed: 42

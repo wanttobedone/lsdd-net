@@ -1,0 +1,21 @@
+# LSDD-Net 部署配置 (NUC端ROS推理节点)
+
+model:
+  checkpoint: "checkpoints/phase1_best.pt"    # 模型权重
+  norm_stats: "checkpoints/norm_stats.pt"     # 标准化参数
+
+ros:
+  rate: 10           # NN推理频率 (Hz)
+  mass: 1.5          # 无人机质量 (kg), 须与MPC一致
+  sensor_rate: 100   # 传感器/MDOB数据频率 (Hz)
+
+  topics:
+    # 订阅话题
+    pose: "/mavros/local_position/pose"
+    velocity: "/mavros/local_position/velocity_local"
+    mdob_world: "/lsdd/mdob_world"
+    mdob_body: "/lsdd/mdob_body"
+
+    # 发布话题
+    pub_force_world: "/lsdd/force_world"
+    pub_force_body: "/lsdd/force_body"
